@@ -98,8 +98,8 @@ const TDIface = '<node> \
 //Create the remote object, based on the correct parh and bus name
 const TDProxy = Gio.DBusProxy.makeProxyWrapper(TDIface);
 const TDClient = new TDProxy(Gio.DBus.session,
-                        'com.intel.cmpc.td.client',
-                        '/com/intel/cmpc/td/client');
+                             'com.intel.cmpc.td.client',
+                             '/com/intel/cmpc/td/client');
 
 //Set the delegate to the TDInfoChanged Event
 TDClient.connectSignal('TDInfoChanged', TDInfoChanged);
