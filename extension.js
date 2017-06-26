@@ -36,7 +36,7 @@ function reload() {
     }
 }
 
-let Menu = new Menu();
+let Menu = new Gtk.Menu();
 
 function refreshMenu(data) {
     if(data == null) {
@@ -109,8 +109,8 @@ TDClient.GetInfoRemote('', refreshIcon);
 TDClient.GetMenuItemInfoRemote('', refreshMenu);
 
 //StatusIcon menu
-StatusIcon.connect('activate', function popup_menu(icon, button, time) {
+StatusIcon.connect('popup-menu', function popup_menu(icon, button, time) {
     Menu.popup(null, null, null, button, time);
 });
 
-Gtk.loop();
+Gtk.main();
