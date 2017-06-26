@@ -7,5 +7,5 @@ Para bajarlo y probarlo ejecutá `git clone https://github.com/HuayraLinux/huayr
 ## TODO:
  * Testear todos los casos posibles
  * Quitar los paths relativos para los íconos
- * Enviar notificaciones al sistema
+ * Agregar una forma de cerrar el programa
  * Armar el paquete de debian

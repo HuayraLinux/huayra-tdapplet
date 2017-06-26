@@ -1,7 +1,9 @@
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
+const Notify = imports.gi.Notify;
 
 Gtk.init(null, 0);
+Notify.init('huayra-tdapplet');
 
 const ICO_UNKNOWN = '0';
 const ICO_CONNECTED_INACTIVE = '1';
@@ -68,8 +70,15 @@ function refreshIcon(data) {
         return;
     }
 
-    const ico_id = data[0]['id'];
-    StatusIcon.set_from_file(icon(ico_id));
+    const icon_id = data[0]['id'];
+    const icon_file = icon(icon_id);
+
+    StatusIcon.set_from_file(icon_file);
+
+    const notification_text = data[0]['header'];
+    const notification = new Notify.Notification('Theft Deterrent', notification_text, icon_file);
+
+    notification.show();
 }
 
 function TDInfoChanged(proxy, sender, msg) {
