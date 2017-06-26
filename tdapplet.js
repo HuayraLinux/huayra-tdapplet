@@ -76,9 +76,12 @@ function refreshIcon(data) {
     StatusIcon.set_from_file(icon_file);
 
     const notification_text = data[0]['header'];
-    const notification = new Notify.Notification('Theft Deterrent', notification_text, icon_file);
 
-    notification.show();
+    new Notify.Notification({
+        //icon_name: '',
+        summary: 'Theft Deterrent',
+        body: notification_text
+    }).show();
 }
 
 function TDInfoChanged(proxy, sender, msg) {
