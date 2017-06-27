@@ -1,9 +1,10 @@
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
+const GLib = imports.gi.GLib;
 const Notify = imports.gi.Notify;
 
 Gtk.init(null, 0);
-Notify.init('huayra-tdapplet');
+Notify.init('Theft Deterrent Notifications');
 
 const ICO_UNKNOWN = '0';
 const ICO_CONNECTED_INACTIVE = '1';
@@ -15,13 +16,14 @@ const ICO_PERMANENT = '6';
 const ICO_PROTECTED = '7';
 const ICO_UPGRADING = '8';
 
-function icon(ico_id) {
-    const iconFolder = './icon/';
-    const logos = ['LogoUnknown_s.png', 'LogoInctive_s.png', 'LogoDisconnectedInactive_s.png', 
-                   'LogoAbouttoExpire_s.png', 'LogoDisconnectedActive_s.png', 'LogoDownload_s.png',
-                   'LogoPermanent_s.png', 'LogoProtected_s.png', 'LogoInstall_s.png'];
+function icon(ico_id, isMedium) {
+    /* TODO: Use /usr/share/... instead of local files */
+    const iconFolder = GLib.get_current_dir() + '/icon/';
+    const logos = ['LogoUnknown', 'LogoInctive', 'LogoDisconnectedInactive',
+                   'LogoAbouttoExpire', 'LogoDisconnectedActive', 'LogoDownload',
+                   'LogoPermanent', 'LogoProtected', 'LogoInstall'];
 
-    return iconFolder + (logos[ico_id] || logos[ICO_UNKNOWN]);
+    return iconFolder + (logos[ico_id] || logos[ICO_UNKNOWN]) + isMedium ? : '_m' : '_s' + '.png';
 }
 
 function reload() {
@@ -57,6 +59,12 @@ function refreshMenu(data) {
         new_menu.append(menu_item);
     });
 
+    new_menu.append(new Gtk.SeparatorMenuItem());
+
+    const quit = new Gtk.MenuItem({ label: 'Cerrar' });
+    quit.connect('activate', Gtk.main_quit);
+    new_menu.append(quit);
+
     new_menu.show_all();
 
     Menu = new_menu;
@@ -71,14 +79,15 @@ function refreshIcon(data) {
     }
 
     const icon_id = data[0]['id'];
-    const icon_file = icon(icon_id);
+    const icon_file_s = icon(icon_id);
+    const icon_file_m = icon(icon_id, true);
 
-    StatusIcon.set_from_file(icon_file);
+    StatusIcon.set_from_file(icon_file_s);
 
     const notification_text = data[0]['header'];
 
     new Notify.Notification({
-        //icon_name: '',
+        icon_name: icon_file_m,
         summary: 'Theft Deterrent',
         body: notification_text
     }).show();
@@ -126,3 +135,4 @@ StatusIcon.connect('popup-menu', function popup_menu(icon, button, time) {
 });
 
 Gtk.main();
+Notify.uninit();
