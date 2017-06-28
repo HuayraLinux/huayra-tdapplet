@@ -1,11 +1,17 @@
+imports.gi.Versions.Gtk = '3.0';
+
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 const GLib = imports.gi.GLib;
 const Notify = imports.gi.Notify;
+const Gettext = imports.gettext;
 
+//Init libraries
+Gettext.textdomain('gtk30');
 Gtk.init(null, 0);
 Notify.init('Theft Deterrent Notifications');
 
+//Icon constants
 const ICO_UNKNOWN = '0';
 const ICO_CONNECTED_INACTIVE = '1';
 const ICO_DISCONNECTED_INACTIVE_URI = '2';
@@ -61,7 +67,7 @@ function refreshMenu(data) {
 
     new_menu.append(new Gtk.SeparatorMenuItem());
 
-    const quit = new Gtk.MenuItem({ label: 'Cerrar' });
+    const quit = new Gtk.MenuItem({ label: Gettext.gettext('Close') });
     quit.connect('activate', Gtk.main_quit);
     new_menu.append(quit);
 
@@ -116,7 +122,7 @@ const TDIface = '<node> \
 </interface> \
 </node>';
 
-//Create the remote object, based on the correct parh and bus name
+//Create the remote object, based on the correct path and bus name
 const TDProxy = Gio.DBusProxy.makeProxyWrapper(TDIface);
 const TDClient = new TDProxy(Gio.DBus.session,
                              'com.intel.cmpc.td.client',
