@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if test x"$GJS_DEBUG_OUTPUT" = x ; then
+    export GJS_DEBUG_OUTPUT=stderr
+fi
+
+if test x"$GJS_DEBUG_TOPICS" = x ; then
+    export GJS_DEBUG_TOPICS="JS ERROR;JS LOG"
+fi
+
+DEBUG_COMMAND=""
+if test x"$TDAPPLET_RUN_DEBUG" != x; then
+    DEBUG_COMMAND="gdb --args"
+fi
+
+exec $DEBUG_COMMAND gjs-console /usr/share/huayra-tdapplet/huayra-tdapplet.js

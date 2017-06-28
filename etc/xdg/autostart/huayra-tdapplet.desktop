@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Theft Deterrent Applet
+Comment=Notifies the user for changes in the Theft Deterrent
+Comment[es]=Envía notificaciones sobre el Theft Deterrent
+Exec=huayra-tdapplet
+Icon=huayra-tdapplet
+Type=Application
+Categories=GTK;Utility;
+Terminal=false

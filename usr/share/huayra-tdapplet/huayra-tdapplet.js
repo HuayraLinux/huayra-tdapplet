@@ -2,7 +2,6 @@ imports.gi.versions.Gtk = '3.0';
 
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
-const GLib = imports.gi.GLib;
 const Notify = imports.gi.Notify;
 const Gettext = imports.gettext;
 
@@ -23,8 +22,8 @@ const ICO_PROTECTED = '7';
 const ICO_UPGRADING = '8';
 
 function icon(ico_id, isMedium) {
-    /* TODO: Use /usr/share/... instead of local files */
-    const iconFolder = GLib.get_current_dir() + '/icon/';
+    /* TODO: Use a build system to configure this dir instead of hardcoding it */
+    const iconFolder = '/usr/share/huayra-tdapplet/icon/';
     const logos = ['LogoUnknown', 'LogoInctive', 'LogoDisconnectedInactive',
                    'LogoAbouttoExpire', 'LogoDisconnectedActive', 'LogoDownload',
                    'LogoPermanent', 'LogoProtected', 'LogoInstall'];
