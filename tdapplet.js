@@ -23,7 +23,7 @@ function icon(ico_id, isMedium) {
                    'LogoAbouttoExpire', 'LogoDisconnectedActive', 'LogoDownload',
                    'LogoPermanent', 'LogoProtected', 'LogoInstall'];
 
-    return iconFolder + (logos[ico_id] || logos[ICO_UNKNOWN]) + isMedium ? : '_m' : '_s' + '.png';
+    return iconFolder + (logos[ico_id] || logos[ICO_UNKNOWN]) + (isMedium ? '_m' : '_s') + '.png';
 }
 
 function reload() {
