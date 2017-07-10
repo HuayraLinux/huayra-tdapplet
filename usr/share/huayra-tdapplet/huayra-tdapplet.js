@@ -65,6 +65,7 @@ function openClient(timeout_time) {
 
     try {
         if(app_info.launch([], null)) {
+            Menu = placeholderMenu();
             timeout(() => {
                 TDClient.GetMenuItemInfoRemote('GET-MENU', refreshMenu);
                 TDClient.GetInfoRemote('GET-ICON', refreshIcon);
@@ -77,19 +78,22 @@ function openClient(timeout_time) {
     }
 }
 
-//Init menu
-let Menu =  new Gtk.Menu();
-{
-    Menu.append(new Gtk.MenuItem({ label: 'Conectando al cliente' }));
-    Menu.append(new Gtk.SeparatorMenuItem());
+function placeholderMenu() {
+    let new_menu = new Gtk.Menu();
+    new_menu.append(new Gtk.MenuItem({ label: 'Conectando al cliente' }));
+    new_menu.append(new Gtk.SeparatorMenuItem());
 
     let quit = new Gtk.MenuItem({ label: Gettext.gettext('Close') });
     quit.connect('activate', Gtk.main_quit);
-    Menu.append(quit);
+    new_menu.append(quit);
 
-    Menu.show_all();
+    new_menu.show_all();
+
+    return new_menu;
 }
 
+//Init menu
+let Menu = placeholderMenu();
 
 let failed = false;
 
