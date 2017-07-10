@@ -1,3 +1,11 @@
+huayra-tdapplet (1.0.1) unstable; urgency=medium
+
+  * Evitado que quede relanzando el cliente indefinidamente
+  * Agregado al autostart
+  * Agregado manejo si el cliente crashea o aún no inició
+
+ -- Ignacio Losiggio <iglosiggio@gmail.com>  Mon, 10 Jul 2017 13:38:08 -0300
+
 huayra-tdapplet (1.0.0) unstable; urgency=low
 
   * Initial release

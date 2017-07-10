@@ -4,11 +4,17 @@ const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 const Notify = imports.gi.Notify;
 const Gettext = imports.gettext;
+const Mainloop = imports.mainloop;
 
 //Init libraries
 Gettext.textdomain('gtk30');
 Gtk.init(null, 0);
 Notify.init('Theft Deterrent Notifications');
+
+//Timeout
+function timeout(fn, time) {
+  Mainloop.timeout_add(time, () => (fn(), false));
+}
 
 //Icon constants
 const ICO_UNKNOWN = '0';
@@ -31,25 +37,63 @@ function icon(ico_id, isMedium) {
     return iconFolder + (logos[ico_id] || logos[ICO_UNKNOWN]) + (isMedium ? '_m' : '_s') + '.png';
 }
 
-function reload() {
-    const TD_CLIENT_APP = '/opt/TheftDeterrentclient/client/Theft_Deterrent_client.autorun'
+function openClient() {
+    failed = false;
 
-    StatusIcon.set_from_file(icon(ICO_UNKNOWN));
-
+    const TD_CLIENT_APP = '/opt/TheftDeterrentclient/client/Theft_Deterrent_client.run --hide';
     let app_info = Gio.app_info_create_from_commandline(TD_CLIENT_APP, null, 0, null);
-    let sucessful_launch = app_info.launch([], null, null);
 
-    if(sucessful_launch) {
-        TDClient.GetInfoRemote('', refreshIcon);
-        TDClient.GetMenuItemInfoRemote('', refreshMenu);
+    try {
+        if(app_info.launch([], null)) {
+            timeout(() => TDClient.GetMenuItemInfoRemote('GET-MENU', refreshMenu), 2000);
+            timeout(() => TDClient.GetInfoRemote('GET-ICON', refreshIcon), 2000);
+        } else {
+            throw new Error('El cliente falló al iniciarse');
+        }
+    } catch (error) {
+        errorMode(error);
     }
 }
 
 let Menu = new Gtk.Menu();
+let failed = false;
 
-function refreshMenu(data) {
+function errorMode(error) {
+    log(error);
+
+    if(failed) return; // Already in error mode
+
+    failed = true;
+    lastIcon = -1;
+
+    new Notify.Notification({
+        icon_name: icon(ICO_UNKNOWN, true),
+        summary: 'Theft Deterrent',
+        body: 'Falló en conectar al cliente de Theft Deterrent, podés reintentar manualmente'
+    }).show();
+
+    const new_menu = new Gtk.Menu();
+
+    const retry = new Gtk.MenuItem({ label: 'Reintentar conexión' });
+    retry.connect('activate', openClient);
+    new_menu.append(retry);
+
+    new_menu.append(new Gtk.SeparatorMenuItem());
+
+    const quit = new Gtk.MenuItem({ label: Gettext.gettext('Close') });
+    quit.connect('activate', Gtk.main_quit);
+    new_menu.append(quit);
+
+    new_menu.show_all();
+
+    Menu = new_menu;
+
+    StatusIcon.set_from_file(icon(ICO_UNKNOWN));
+}
+
+function refreshMenu(data, error) {
     if(data == null) {
-        reload();
+        errorMode(error);
         return;
     }
 
@@ -59,7 +103,9 @@ function refreshMenu(data) {
     Object.keys(menu_data).forEach(keyname => {
         const menu_item = new Gtk.MenuItem({ label: menu_data[keyname] });
 
-        menu_item.connect('activate', () => TDClient.OnMenuItemClickRemote(keyname));
+        menu_item.connect('activate',
+            () => TDClient.OnMenuItemClickRemote(keyname,
+                (_, error) => { if(error) errorMode(error) }));
 
         new_menu.append(menu_item);
     });
@@ -76,16 +122,20 @@ function refreshMenu(data) {
 }
 
 const StatusIcon = Gtk.StatusIcon.new_from_file(icon(ICO_UNKNOWN));
+let lastIcon = -1; // First notification is important
 
-function refreshIcon(data) {
+function refreshIcon(data, error) {
     if (data == null) {
-        reload();
+        errorMode(error);
         return;
     }
 
     const icon_id = data[0]['id'];
     const icon_file_s = icon(icon_id);
     const icon_file_m = icon(icon_id, true);
+
+    if(lastIcon === icon_id) return;
+    else lastIcon = icon_id;
 
     StatusIcon.set_from_file(icon_file_s);
 
@@ -131,8 +181,7 @@ const TDClient = new TDProxy(Gio.DBus.session,
 TDClient.connectSignal('TDInfoChanged', TDInfoChanged);
 
 //Load initial data
-TDClient.GetInfoRemote('', refreshIcon);
-TDClient.GetMenuItemInfoRemote('', refreshMenu);
+openClient()
 
 //StatusIcon menu
 StatusIcon.connect('popup-menu', function popup_menu(icon, button, time) {
