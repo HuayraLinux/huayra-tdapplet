@@ -12,8 +12,27 @@ Gtk.init(null, 0);
 Notify.init('Theft Deterrent Notifications');
 
 //Timeout
-function timeout(fn, time) {
-  Mainloop.timeout_add(time, () => (fn(), false));
+let timeouts = {};
+
+function timeout(fn, time, name) {
+  name = name || id.toString();
+  const id = Mainloop.timeout_add(time, () => {
+    fn();
+    delete timeouts[name];
+    return false;
+  });
+
+  if(timeouts[name]) cancelTimeout(name);
+  timeouts[name] = id;
+  return name;
+}
+
+function cancelTimeout(name) {
+  return Mainloop.source_remove(timeouts[name]);
+}
+
+function hasTimeout(name) {
+  return timeouts.hasOwnProperty(name);
 }
 
 //Icon constants
@@ -37,7 +56,8 @@ function icon(ico_id, isMedium) {
     return iconFolder + (logos[ico_id] || logos[ICO_UNKNOWN]) + (isMedium ? '_m' : '_s') + '.png';
 }
 
-function openClient() {
+function openClient(timeout_time) {
+    timeout_time = timeout_time || 2000;
     failed = false;
 
     const TD_CLIENT_APP = '/opt/TheftDeterrentclient/client/Theft_Deterrent_client.run --hide';
@@ -45,8 +65,10 @@ function openClient() {
 
     try {
         if(app_info.launch([], null)) {
-            timeout(() => TDClient.GetMenuItemInfoRemote('GET-MENU', refreshMenu), 2000);
-            timeout(() => TDClient.GetInfoRemote('GET-ICON', refreshIcon), 2000);
+            timeout(() => {
+                TDClient.GetMenuItemInfoRemote('GET-MENU', refreshMenu);
+                TDClient.GetInfoRemote('GET-ICON', refreshIcon);
+            }, timeout_time, 'OPEN_CLIENT');
         } else {
             throw new Error('El cliente falló al iniciarse');
         }
@@ -55,7 +77,20 @@ function openClient() {
     }
 }
 
-let Menu = new Gtk.Menu();
+//Init menu
+let Menu =  new Gtk.Menu();
+{
+    Menu.append(new Gtk.MenuItem({ label: 'Conectando al cliente' }));
+    Menu.append(new Gtk.SeparatorMenuItem());
+
+    let quit = new Gtk.MenuItem({ label: Gettext.gettext('Close') });
+    quit.connect('activate', Gtk.main_quit);
+    Menu.append(quit);
+
+    Menu.show_all();
+}
+
+
 let failed = false;
 
 function errorMode(error) {
@@ -150,6 +185,16 @@ function refreshIcon(data, error) {
 
 function TDInfoChanged(proxy, sender, msg) {
     refreshIcon(msg);
+
+    //If an event has arrived and the application is initializing it's safe to accelerate the process
+    if(cancelTimeout('OPEN_CLIENT')) {
+        TDClient.GetMenuItemInfoRemote('GET-MENU', refreshMenu);
+    }
+    //If the application is in a failed state this event gives hope
+    else if(failed) {
+        TDClient.GetMenuItemInfoRemote('GET-MENU', refreshMenu);
+        failed = false;
+    }
 }
 
 const TDIface = '<node> \
@@ -181,7 +226,7 @@ const TDClient = new TDProxy(Gio.DBus.session,
 TDClient.connectSignal('TDInfoChanged', TDInfoChanged);
 
 //Load initial data
-openClient()
+openClient(60000)
 
 //StatusIcon menu
 StatusIcon.connect('popup-menu', function popup_menu(icon, button, time) {

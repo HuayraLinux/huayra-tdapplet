@@ -1,3 +1,11 @@
+huayra-tdapplet (1.0.2) unstable; urgency=medium
+
+  * Reparado un problema de timing cuando la pc tarda mucho en iniciar
+  * Agregado "conectando al cliente" como placeholder de menú inicial
+  * Handleado el caso de que el cliente se repare milagrosamente
+
+ -- Ignacio Losiggio <iglosiggio@gmail.com>  Mon, 10 Jul 2017 14:58:30 -0300
+
 huayra-tdapplet (1.0.1) unstable; urgency=medium
 
   * Evitado que quede relanzando el cliente indefinidamente
