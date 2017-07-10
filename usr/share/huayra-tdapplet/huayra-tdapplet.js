@@ -110,7 +110,7 @@ function errorMode(error) {
     const new_menu = new Gtk.Menu();
 
     const retry = new Gtk.MenuItem({ label: 'Reintentar conexión' });
-    retry.connect('activate', openClient);
+    retry.connect('activate', () => openClient());
     new_menu.append(retry);
 
     new_menu.append(new Gtk.SeparatorMenuItem());

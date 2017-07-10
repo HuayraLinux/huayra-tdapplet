@@ -1,3 +1,9 @@
+huayra-tdapplet (1.0.3) unstable; urgency=medium
+
+  * Fix menor (notificaciones repetidas de desconexión al cliente)
+
+ -- Ignacio Losiggio <iglosiggio@gmail.com>  Mon, 10 Jul 2017 15:27:13 -0300
+
 huayra-tdapplet (1.0.2) unstable; urgency=medium
 
   * Reparado un problema de timing cuando la pc tarda mucho en iniciar
