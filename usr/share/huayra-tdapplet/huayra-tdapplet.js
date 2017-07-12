@@ -56,16 +56,18 @@ function icon(ico_id, isMedium) {
     return iconFolder + (logos[ico_id] || logos[ICO_UNKNOWN]) + (isMedium ? '_m' : '_s') + '.png';
 }
 
+const TD_CLIENT_APP = '/opt/TheftDeterrentclient/client/Theft_Deterrent_client.run --hide';
+const TD_CLIENT_APP_INFO = Gio.app_info_create_from_commandline(TD_CLIENT_APP, null, 0, null);
+
 function openClient(timeout_time) {
     timeout_time = timeout_time || 2000;
     failed = false;
 
-    const TD_CLIENT_APP = '/opt/TheftDeterrentclient/client/Theft_Deterrent_client.run --hide';
-    let app_info = Gio.app_info_create_from_commandline(TD_CLIENT_APP, null, 0, null);
-
     try {
-        if(app_info.launch([], null)) {
+        if(TD_CLIENT_APP_INFO.launch([], null)) {
             Menu = placeholderMenu();
+            lastText = 'Conectando al cliente';
+
             timeout(() => {
                 TDClient.GetMenuItemInfoRemote('GET-MENU', refreshMenu);
                 TDClient.GetInfoRemote('GET-ICON', refreshIcon);
@@ -104,6 +106,7 @@ function errorMode(error) {
 
     failed = true;
     lastIcon = -1;
+    lastText = 'Falló la conexión al cliente';
 
     new Notify.Notification({
         icon_name: icon(ICO_UNKNOWN, true),
@@ -162,6 +165,7 @@ function refreshMenu(data, error) {
 
 const StatusIcon = Gtk.StatusIcon.new_from_file(icon(ICO_UNKNOWN));
 let lastIcon = -1; // First notification is important
+let lastText = 'Conectando al cliente';
 
 function refreshIcon(data, error) {
     if (data == null) {
@@ -173,12 +177,12 @@ function refreshIcon(data, error) {
     const icon_file_s = icon(icon_id);
     const icon_file_m = icon(icon_id, true);
 
-    if(lastIcon === icon_id) return;
-    else lastIcon = icon_id;
+    const notification_text = data[0]['header'];
+
+    if(lastIcon === icon_id && lastText === notification_text) return;
+    else { lastIcon = icon_id; lastText = notification_text }
 
     StatusIcon.set_from_file(icon_file_s);
-
-    const notification_text = data[0]['header'];
 
     new Notify.Notification({
         icon_name: icon_file_m,
@@ -233,8 +237,21 @@ TDClient.connectSignal('TDInfoChanged', TDInfoChanged);
 openClient(60000)
 
 //StatusIcon menu
+StatusIcon['has-tooltip'] = true;
 StatusIcon.connect('popup-menu', function popup_menu(icon, button, time) {
     Menu.popup(null, null, null, button, time);
+});
+
+const TD_SHOW_APP = '/opt/TheftDeterrentclient/client/Theft_Deterrent_client.run';
+const TD_SHOW_APP_INFO = Gio.app_info_create_from_commandline(TD_SHOW_APP, null, 0, null);
+
+StatusIcon.connect('activate', function show_tdclient() {
+    TD_SHOW_APP_INFO.launch([], null);
+});
+
+StatusIcon.connect('query-tooltip', function show_tooltip(statusIcon, x, y, keymode, tooltip) {
+  tooltip.set_text('Theft Deterrent Client: ' + lastText);
+  return true;
 });
 
 Gtk.main();

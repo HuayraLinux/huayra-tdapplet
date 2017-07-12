@@ -1,3 +1,11 @@
+huayra-tdapplet (1.0.5) unstable; urgency=medium
+
+  * Agregado comportamiento al hacer click sobre el ícono (abrir el cliente)
+  * Agregado tooltip al mantener el mouse sobre el ícono con el estado del
+    cliente
+
+ -- Ignacio Losiggio <iglosiggio@gmail.com>  Wed, 12 Jul 2017 15:48:36 -0300
+
 huayra-tdapplet (1.0.4) unstable; urgency=medium
 
   * Agregado el menú de "conectando" cuando está reintentando la conexión
