@@ -3,6 +3,7 @@ Upstream-Name: huayra-tdapplet
 
 Files: *
 Copyright: 2017 Ignacio Losiggio <iglosiggio@gmail.com>
+           2019 Fernando Toledo <ragnarok@docksud.com.ar>
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

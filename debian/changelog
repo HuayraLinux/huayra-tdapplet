@@ -1,3 +1,9 @@
+huayra-tdapplet (1.0.6) unstable; urgency=medium
+
+  * Cambio del control de tamaño de las imagenes que se usan como iconos
+
+ -- Fernando Toledo <ragnarok@docksud.com.ar>  Thu, 02 May 2019 11:24:19 -0300
+
 huayra-tdapplet (1.0.5) unstable; urgency=medium
 
   * Agregado comportamiento al hacer click sobre el ícono (abrir el cliente)

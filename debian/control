@@ -1,17 +1,20 @@
 Source: huayra-tdapplet
 Section: utils
 Priority: optional
-Maintainer: Ignacio Losiggio <iglosiggio@gmail.com>
+Maintainer: Fernando Toledo <ragnarok@docksud.com.ar>
 Build-Depends: debhelper (>= 9)
-Standards-Version: 3.9.6
+Standards-Version: 3.9.8
 Homepage: https://github.com/HuayraLinux/huayra-tdapplet
 #Vcs-Git: git://anonscm.debian.org/collab-maint/huayra-tdapplet.git
 #Vcs-Browser: http://anonscm.debian.org/?p=collab-maint/huayra-tdapplet.git;a=summary
 
 Package: huayra-tdapplet
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, theftdeterrentclient,
+Depends: ${shlibs:Depends}, ${misc:Depends}, theftdeterrentclient (>= 4.7),
          gjs, gir1.2-gtk-3.0, gir1.2-notify-0.7
 Description: Programa que notifica de cambios en el Theft Deterrent
  huayra-tdapplet es un programa que se connecta al cliente de Theft
- Deterrent y notifica al usuario del estado de su netbook
+ Deterrent via D-Bus y notifica al usuario del estado de su netbook
+ .
+ Esta aplicación surge porque el agente original falla y no agrega
+ su icono al area de notificación

@@ -46,14 +46,14 @@ const ICO_PERMANENT = '6';
 const ICO_PROTECTED = '7';
 const ICO_UPGRADING = '8';
 
-function icon(ico_id, isMedium) {
+function icon(ico_id) {
     /* TODO: Use a build system to configure this dir instead of hardcoding it */
     const iconFolder = '/usr/share/huayra-tdapplet/icon/';
     const logos = ['LogoUnknown', 'LogoInctive', 'LogoDisconnectedInactive',
                    'LogoAbouttoExpire', 'LogoDisconnectedActive', 'LogoDownload',
                    'LogoPermanent', 'LogoProtected', 'LogoInstall'];
 
-    return iconFolder + (logos[ico_id] || logos[ICO_UNKNOWN]) + (isMedium ? '_m' : '_s') + '.png';
+    return iconFolder + (logos[ico_id] || logos[ICO_UNKNOWN]) + '.png';
 }
 
 const TD_CLIENT_APP = '/opt/TheftDeterrentclient/client/Theft_Deterrent_client.run --hide';
@@ -109,7 +109,7 @@ function errorMode(error) {
     lastText = 'Falló la conexión al cliente';
 
     new Notify.Notification({
-        icon_name: icon(ICO_UNKNOWN, true),
+        icon_name: icon(ICO_UNKNOWN),
         summary: 'Theft Deterrent',
         body: 'Falló en conectar al cliente de Theft Deterrent, podés reintentar manualmente'
     }).show();
@@ -174,8 +174,7 @@ function refreshIcon(data, error) {
     }
 
     const icon_id = data[0]['id'];
-    const icon_file_s = icon(icon_id);
-    const icon_file_m = icon(icon_id, true);
+    const icon_file_m = icon(icon_id);
 
     const notification_text = data[0]['header'];
 
