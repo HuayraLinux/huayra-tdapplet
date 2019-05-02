@@ -1,3 +1,9 @@
+huayra-tdapplet (1.0.7) unstable; urgency=medium
+
+  * fix minimo (nombre de variable de icono)
+
+ -- Fernando Toledo <ragnarok@docksud.com.ar>  Thu, 02 May 2019 15:35:18 -0300
+
 huayra-tdapplet (1.0.6) unstable; urgency=medium
 
   * Cambio del control de tamaño de las imagenes que se usan como iconos
