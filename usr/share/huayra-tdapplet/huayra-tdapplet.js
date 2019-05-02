@@ -181,7 +181,7 @@ function refreshIcon(data, error) {
     if(lastIcon === icon_id && lastText === notification_text) return;
     else { lastIcon = icon_id; lastText = notification_text }
 
-    StatusIcon.set_from_file(icon_file_s);
+    StatusIcon.set_from_file(icon_file_m);
 
     new Notify.Notification({
         icon_name: icon_file_m,
